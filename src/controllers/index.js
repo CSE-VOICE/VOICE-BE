@@ -1,2 +1,3 @@
-// API 로직 추가 예정
-module.exports = {};
+module.exports = {
+    authController: require('./auth.controller'),
+};

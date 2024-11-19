@@ -1,9 +1,8 @@
-// 모듈 
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
-const { db, initializeDB } = require('./models');
+const { db } = require('./models');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,12 +23,12 @@ app.use((err, req, res, next) => {
 });
 
 // 서버 시작 함수
-
-// 서버 시작 함수
 const startServer = async () => {
     try {
         // DB 연결
-        await initializeDB();
+        await db.sequelize.authenticate();
+        console.log('Database connection has been established successfully.');
+        
         // 서버 시작
         app.listen(PORT, () => {
             console.log(`Server is running on port ${PORT}`);
@@ -38,6 +37,6 @@ const startServer = async () => {
         console.error('Failed to start server:', error);
         process.exit(1);
     }
-};
+ };
 
 startServer();
