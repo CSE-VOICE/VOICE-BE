@@ -23,7 +23,8 @@ module.exports = (sequelize, Sequelize) => {
         },
         state: {
             type: Sequelize.STRING(100),
-            allowNull: false
+            allowNull: false,
+            defaultValue: '대기'
         },
         img: {
             type: Sequelize.STRING(255),
