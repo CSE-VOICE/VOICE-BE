@@ -3,7 +3,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
-const { initializeDB } = require('./models');
+const { db, initializeDB } = require('./models');
 
 const app = express();
 const PORT = process.env.PORT || 3000;

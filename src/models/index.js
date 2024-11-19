@@ -1,4 +1,3 @@
-require('dotenv').config();
 const { Sequelize } = require('sequelize');
 require('dotenv').config();
 
@@ -22,7 +21,21 @@ const db = {};
 db.Sequelize = Sequelize;
 db.sequelize = sequelize;
 
-// models 추가 예정
+// models 추가 
+db.User = require('./user.model.js')(sequelize, Sequelize);
+db.Appliance = require('./appliance.model.js')(sequelize, Sequelize);
+db.AiSpeaker = require('./ai-speaker.model.js')(sequelize, Sequelize);
+db.RoutineHistory = require('./routine-history.model.js')(sequelize, Sequelize);
+
+// 관계 설정
+db.User.hasMany(db.Appliance, { foreignKey: 'user_id' });
+db.Appliance.belongsTo(db.User, { foreignKey: 'user_id' });
+
+db.User.hasMany(db.AiSpeaker, { foreignKey: 'user_id' });
+db.AiSpeaker.belongsTo(db.User, { foreignKey: 'user_id' });
+
+db.User.hasMany(db.RoutineHistory, { foreignKey: 'user_id' });
+db.RoutineHistory.belongsTo(db.User, { foreignKey: 'user_id' });
 
 // DB 연결 테스트 함수
 const initializeDB = async () => {
