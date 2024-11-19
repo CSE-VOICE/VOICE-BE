@@ -37,16 +37,4 @@ db.AiSpeaker.belongsTo(db.User, { foreignKey: 'user_id' });
 db.User.hasMany(db.RoutineHistory, { foreignKey: 'user_id' });
 db.RoutineHistory.belongsTo(db.User, { foreignKey: 'user_id' });
 
-// DB 연결 테스트 함수
-const initializeDB = async () => {
-    try {
-        await db.sequelize.authenticate();
-        console.log('Database connection has been established successfully.');
-    } catch (error) {
-        console.error('Unable to connect to the database:', error.message);  // error.message 추가
-        console.error('Error details:', error);  // 전체 에러 객체 출력
-        process.exit(1);
-    }
-};
-
-module.exports = { db, initializeDB };
+module.exports = { db };
