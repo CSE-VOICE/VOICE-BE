@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const session = require('express-session');
 const cors = require('cors');
 const morgan = require('morgan');
 const { db } = require('./models');
@@ -9,6 +10,12 @@ const PORT = process.env.PORT || 3000;
 
 // 미들웨어 설정
 app.use(cors()); // CORS 활성화
+app.use(session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: { secure: false}
+}));
 app.use(morgan('dev')); // 로그 출력
 app.use(express.json()); 
 
