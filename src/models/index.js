@@ -7,13 +7,29 @@ const dbConfig = {
     USER: process.env.DB_USER,
     PASSWORD: process.env.DB_PASS,
     DB: process.env.DB_NAME,
-    dialect: 'mysql'
+    dialect: 'mysql',
+    // 아래 설정들 추가
+    timezone: '+09:00',
+    dialectOptions: {
+        charset: 'utf8mb4',
+        dateStrings: true,
+        typeCast: true
+    },
+    pool: {
+        max: 5,
+        min: 0,
+        acquire: 30000,
+        idle: 10000
+    }
 }
 
 // Sequelize 객체 생성
 const sequelize = new Sequelize(dbConfig.DB, dbConfig.USER, dbConfig.PASSWORD, {
     host: dbConfig.HOST,
-    dialect: dbConfig.dialect
+    dialect: dbConfig.dialect,
+    timezone: dbConfig.timezone,
+    dialectOptions: dbConfig.dialectOptions,
+    pool: dbConfig.pool
 });
 
 // DB 객체 생성
