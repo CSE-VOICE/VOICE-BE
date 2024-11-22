@@ -26,7 +26,10 @@ app.use(routes);
 // 에러 처리 미들웨어
 app.use((err, req, res, next) => {
     console.error(err);
-    res.status(500).send('서버 에러 발생');
+    res.status(500).json({  // JSON 형식으로 응답 변경
+        success: false,
+        message: '서버 에러가 발생했습니다.'
+    });
 });
 
 // 서버 시작 함수
