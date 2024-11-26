@@ -17,7 +17,10 @@ app.use(session({
     cookie: { secure: false}
 }));
 app.use(morgan('dev')); // 로그 출력
-app.use(express.json()); 
+// app.use(express.json()); 
+app.use(express.json({ limit: '10mb' })); // JSON 파싱 + 용량 제한 설정
+app.use(express.urlencoded({ limit: '10mb', extended: true})); // URL 인코딩 파싱
+app.use('/uploads', express.static('src/uploads')); // 정적 파일 제공
 
 // 라우트 설정
 const routes = require('./routes');
