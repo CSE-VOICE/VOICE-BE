@@ -27,11 +27,12 @@ exports.getRoutineHistories = async (req, res) => {
         const histories = await db.RoutineHistory.findAll({
             where: whereClause,
             order: [['created_at', 'DESC']],
-            attributes: ['id', 'created_at']
+            attributes: ['id', 'created_at', 'situation_txt']
         });
 
         // 목록 번호 (오래된순으로 1번부터)
         const historiesWithNumber = histories.map((history, index) => ({
+            situation_txt: history.situation_txt,
             number: histories.length - index, // 화면에 보여질 순번   
             routine_id: history.id, // DB상의 실제 ID
             created_at: history.created_at
