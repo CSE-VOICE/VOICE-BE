@@ -1,7 +1,7 @@
 const { db } = require('../models');
 const axios = require('axios');
 
-const ML_API_URL = 'http://localhost:8000/recommend_routine/';
+const ML_API_URL = 'http://3.133.23.226:8000/recommend_routine/';
 
 // AI 모델에 루틴 추천 요청 전송
 exports.sendRecommendRequest = async (req, res) => {
