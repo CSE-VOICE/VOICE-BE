@@ -117,21 +117,30 @@ exports.acceptRecommendation = async (req, res) => {
             });
         }
 
-        // 동일한 상황-루틴 쌍이 이미 존재하는지 확인
-        const existingRoutine = await db.RoutineHistory.findOne({
+        // 전체 루틴 히스토리 개수 확인
+        const totalRoutines = await db.RoutineHistory.count({
             where: {
-                user_id: parseInt(userId),
-                situation_txt: recommendation.situation,
-                routine_txt: recommendation.routine
+                user_id: parseInt(userId)
             }
         });
 
-        // 이미 동일한 상황-루틴 쌍이 있는 경우
-        if (existingRoutine) {
-            return res.status(409).json({
-                success: false,
-                message: '이미 동일한 상황에 대한 동일한 루틴이 존재합니다.'
+        // 저장된 루틴이 하나라도 있을 때만 중복 체크
+        if (totalRoutines > 0) {
+            const existingRoutine = await db.RoutineHistory.findOne({
+                where: {
+                    user_id: parseInt(userId),
+                    situation_txt: recommendation.situation,
+                    routine_txt: recommendation.routine
+                }
             });
+
+            // 이미 동일한 상황-루틴 쌍이 있는 경우
+            if (existingRoutine) {
+                return res.status(409).json({
+                    success: false,
+                    message: '이미 동일한 상황에 대한 동일한 루틴이 존재합니다.'
+                });
+            }
         }
 
         // 새로운 추천 루틴을 RoutineHistory DB에 저장
