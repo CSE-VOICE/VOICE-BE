@@ -9,7 +9,12 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // 미들웨어 설정
-app.use(cors()); // CORS 활성화
+app.use(cors({
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
+    credentials: true,
+    optionsSuccessStatus: 200
+}));
 app.use(session({
     secret: process.env.SESSION_SECRET,
     resave: false,
@@ -43,7 +48,7 @@ const startServer = async () => {
         console.log('Database connection has been established successfully.');
         
         // 서버 시작
-        app.listen(PORT, () => {
+        app.listen(PORT, '0.0.0.0', () => {
             console.log(`Server is running on port ${PORT}`);
             console.log(`Connected to DB at ${process.env.DB_HOST}`);
         });

@@ -6,13 +6,6 @@ const fs = require('fs');
 ffmpeg.setFfmpegPath(ffmpegPath);
 
 class VoiceController {
-   /**
-    * processVoice - 음성 파일 처리 메인 함수
-    * 1. 프론트엔드에서 전송된 m4a 음성 파일 수신
-    * 2. ffmpeg를 사용하여 wav 포맷으로 변환
-    * 3. 변환 완료 후 원본 m4a 파일 삭제
-    * 4. 생성된 wav 파일의 경로를 응답으로 반환
-    */
     processVoice = async (req, res) => {
         try {
             // multer를 통해 전송된 파일이 존재하는지 확인
