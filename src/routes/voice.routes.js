@@ -28,6 +28,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // 음성 파일 업로드 라우트
-router.post('/convert', upload.single('audio'), voiceController.processVoice);
+router.post('/process', upload.single('audio'), voiceController.processVoice);
 
 module.exports = router;

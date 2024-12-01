@@ -2,6 +2,11 @@
 const ffmpeg = require('fluent-ffmpeg');
 const ffmpegPath = require('ffmpeg-static');
 const fs = require('fs');
+const axios = require('axios');
+const FormData = require('form-data');
+const path = require('path');
+
+const FASTAPI_URL = 'http://localhost:8000/analyze'; // FastAPI 서버 URL
 
 ffmpeg.setFfmpegPath(ffmpegPath);
 
@@ -16,20 +21,38 @@ class VoiceController {
                 });
             }
 
-            // m4a 파일을 wav로 변환하는 함수 호출
-            const wavPath = await this.convertToWav(req.file.path);
+            try {
+                // m4a 파일을 wav로 변환
+                const wavPath = await this.convertToWav(req.file.path);
+                // 변환된 wav 파일을 FastAPI 서버로 전송
+                await this.sendAudioForAnalysis(wavPath);
 
-            // 변환된 wav 파일 경로를 JSON 형태로 응답
-            res.json({
-                success: true,
-                data: { wavFile: wavPath}
-            });
+                // 전송된 파일의 상세 정보
+                const fileInfo = {
+                    name: path.basename(wavPath),
+                    format: path.extname(wavPath),
+                    wavPath: wavPath
+                };
+
+                // 성공 시 응답
+                res.json({
+                    success: true,
+                    message: '음성 파일이 성공적으로 전송되었습니다.',
+                    file: fileInfo
+                });
+            } catch (error) {
+                // 에러 발생 시 임시 파일 정리
+                if (req.file.path && fs.existsSync(req.file.path)) {
+                    fs.unlinkSync(req.file.path);
+                }
+                throw error;
+            }
         } catch (error) {
-            // 파일 처리 중 발생한 에러 처리
             console.error('Voice processing error:', error);
             res.status(500).json({
                 success: false,
-                message: '음성 파일 처리에 실패했습니다.'
+                message: '음성 파일 처리에 실패했습니다.',
+                error: error.message
             });
         }
     }
@@ -54,6 +77,37 @@ class VoiceController {
                 .save(outputPath);
         });
     }
+
+    // sendAudioForAnalysis - wav 파일을 FastAPI 서버로 전송하는 함수
+    sendAudioForAnalysis = async (wavPath) => {
+        // form-data 객체 생성
+        const form = new FormData();
+        // wav 파일을 form-data에 추가
+        form.append('file', fs.createReadStream(wavPath), {
+            filename: path.basename(wavPath),
+            contentType: 'audio/wav'
+        });
+
+        try {
+            // FastAPI 서버로 POST 요청 전송
+            await axios.post(FASTAPI_URL, form, {
+                headers: {
+                    ...form.getHeaders(), // form-data 헤더 포함
+                }
+            });
+        } catch (error) {
+            console.error('Error sending audio file to FASTAPI server:', error);
+            throw new Error('음성 파일 전송에 실패했습니다.');
+        }
+    }
+
+    // // FastAPI 서버 연동 전 테스트용 임시 함수
+    // sendAudioForAnalysis = async (wavPath) => {
+    //     console.log('음성 파일 변환 완료:', {
+    //         path: wavPath
+    //     });
+    //     return true;
+    // }
 }
 
 module.exports = new VoiceController();
