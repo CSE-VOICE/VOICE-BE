@@ -50,6 +50,8 @@ class VoiceController {
         return new Promise((resolve, reject) => {
             ffmpeg(inputPath)
                 .toFormat('wav')
+                .audioFrequency(16000)
+                .audioChannels(1)
                 .on('end', () => {
                     // 기존 m4a 파일 삭제
                     fs.unlinkSync(inputPath); 
