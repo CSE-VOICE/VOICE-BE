@@ -6,7 +6,7 @@ const axios = require('axios');
 const FormData = require('form-data');
 const path = require('path');
 
-const FASTAPI_URL = 'http://localhost:8000/analyze'; // FastAPI 서버 URL
+const FASTAPI_URL = 'http://3.133.23.226:8000/voice_analysis/'; // FastAPI 서버 URL
 
 ffmpeg.setFfmpegPath(ffmpegPath);
 
