@@ -68,6 +68,7 @@ class VoiceController {
                 .toFormat('wav')
                 .audioFrequency(16000)
                 .audioChannels(1)
+                .audioCodec('pcm_s16le')
                 .on('end', () => {
                     // 기존 m4a 파일 삭제
                     fs.unlinkSync(inputPath); 
@@ -78,36 +79,26 @@ class VoiceController {
         });
     }
 
-    // sendAudioForAnalysis - wav 파일을 FastAPI 서버로 전송하는 함수
     sendAudioForAnalysis = async (wavPath) => {
-        // form-data 객체 생성
         const form = new FormData();
-        // wav 파일을 form-data에 추가
-        form.append('file', fs.createReadStream(wavPath), {
+        form.append('audio', fs.createReadStream(wavPath), {
             filename: path.basename(wavPath),
-            contentType: 'audio/wav'
+            contentType: 'audio/wave'
         });
-
+    
         try {
-            // FastAPI 서버로 POST 요청 전송
-            await axios.post(FASTAPI_URL, form, {
+            const response = await axios.post(FASTAPI_URL, form, {
                 headers: {
-                    ...form.getHeaders(), // form-data 헤더 포함
+                    ...form.getHeaders(),
+                    'Accept': 'application/json'
                 }
             });
+            return response.data;
         } catch (error) {
-            console.error('Error sending audio file to FASTAPI server:', error);
+            console.error('FastAPI Error:', error.response?.data);
             throw new Error('음성 파일 전송에 실패했습니다.');
         }
     }
-
-    // // FastAPI 서버 연동 전 테스트용 임시 함수
-    // sendAudioForAnalysis = async (wavPath) => {
-    //     console.log('음성 파일 변환 완료:', {
-    //         path: wavPath
-    //     });
-    //     return true;
-    // }
 }
 
 module.exports = new VoiceController();
