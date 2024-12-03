@@ -1,4 +1,3 @@
-// 음성 파일 처리 컨트롤러₩
 const ffmpeg = require('fluent-ffmpeg');
 const ffmpegPath = require('ffmpeg-static');
 const fs = require('fs');
